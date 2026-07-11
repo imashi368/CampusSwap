@@ -30,9 +30,9 @@
 <div class="hero-section text-center mb-5 shadow">
     <div class="container">
         <h1 class="display-4 fw-bold">Buy & Sell on Campus 🎓</h1>
-        <button class="btn btn-light btn-lg fw-bold px-4 mt-3 text-primary" onclick="fetchListings()">
-            <i class="fa-solid fa-arrows-rotate me-2"></i>Explore Listings
-        </button>
+        <a href="/api/listings" class="btn btn-light btn-lg fw-bold px-4 mt-3 text-primary">
+    <i class="fa-solid fa-arrows-rotate me-2"></i>Explore Listings
+</a>
     </div>
 </div>
 
@@ -96,8 +96,9 @@
 </div>
 
 <script>
-    const API_URL = 'http://localhost:8080/api/listings';
-    const REVIEW_API = 'http://localhost:8080/api/reviews';
+    
+const API_URL = '/api/listings'; 
+const REVIEW_API = '/api/reviews';
     let bootstrapModal, reviewModal;
 
     document.addEventListener("DOMContentLoaded", () => {
