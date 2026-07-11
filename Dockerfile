@@ -1,9 +1,9 @@
 # Stage 1: Build the application
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM maven:3.9-eclipse-temurin-21 AS build
 COPY . .
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Stage 2: Run the application
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jre-alpine
 COPY --from=build /target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
