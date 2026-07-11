@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusSwap | Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; transition: transform 0.2s, box-shadow 0.2s; border-radius: 12px; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .hero-section { background: linear-gradient(135deg, #007bff, #6610f2); color: white; padding: 60px 0; border-radius: 0 0 24px 24px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-graduation-cap me-2"></i>Campus<span class="text-primary">Swap</span></a>
+            <div class="ms-auto">
+                <a href="login.html" class="btn btn-outline-light me-2">Login</a>
+                <button class="btn btn-warning" onclick="openAddModal()">+ Post an Ad</button>
+            </div>
+        </div>
+    </nav>
+</header>
+    
+<div class="hero-section text-center mb-5 shadow">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Buy & Sell on Campus 🎓</h1>
+        <button class="btn btn-light btn-lg fw-bold px-4 mt-3 text-primary" onclick="fetchListings()">
+            <i class="fa-solid fa-arrows-rotate me-2"></i>Explore Listings
+        </button>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <h2 class="h4 fw-bold text-secondary mb-4">Recent Listings</h2>
+    <div id="listings-container" class="row g-4"></div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="listingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Listing Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="listingForm" onsubmit="saveListing(event)">
+                    <input type="hidden" id="itemId">
+                    <div class="mb-3"><input type="text" id="itemTitle" class="form-control" placeholder="Title" required></div>
+                    <div class="mb-3"><textarea id="itemDesc" class="form-control" placeholder="Description" required></textarea></div>
+                    <div class="mb-3"><input type="number" id="itemPrice" class="form-control" placeholder="Price (Rs.)" required></div>
+                    <div class="mb-3"><input type="text" id="itemContact" class="form-control" placeholder="Contact Number" required></div>
+                    <div class="mb-3"><input type="text" id="studentName" class="form-control" placeholder="Student Name" required></div>
+                    <button type="submit" class="btn btn-success w-100">Publish</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Student Reviews</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="reviews-body" class="mb-4"></div>
+                <hr>
+                <h6>Add a Review</h6>
+                <input type="hidden" id="currentListingId">
+                <div class="mb-2"><input type="text" id="reviewerName" class="form-control" placeholder="Your Name"></div>
+                <div class="mb-2"><textarea id="reviewerComment" class="form-control" placeholder="Your Comment"></textarea></div>
+                <div class="mb-2">
+                    <label>Rating:</label>
+                    <select id="reviewerRating" class="form-select">
+                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4)</option>
+                        <option value="3">⭐⭐⭐ (3)</option>
+                        <option value="2">⭐⭐ (2)</option>
+                        <option value="1">⭐ (1)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary w-100" onclick="submitReview()">Submit Review</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/listings';
+    const REVIEW_API = 'http://localhost:8080/api/reviews';
+    let bootstrapModal, reviewModal;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        bootstrapModal = new bootstrap.Modal(document.getElementById('listingModal'));
+        reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        fetchListings();
+    });
+
+    function openAddModal() {
+        document.getElementById('listingForm').reset();
+        document.getElementById('itemId').value = '';
+        bootstrapModal.show();
+    }
+
+    function openEditModal(id, title, desc, contact, name, price) {
+        document.getElementById('itemId').value = id;
+        document.getElementById('itemTitle').value = title;
+        document.getElementById('itemDesc').value = desc;
+        document.getElementById('itemContact').value = contact;
+        document.getElementById('studentName').value = name;
+        document.getElementById('itemPrice').value = price;
+        bootstrapModal.show();
+    }
+
+    function renderListings(data) {
+        const container = document.getElementById('listings-container');
+        container.innerHTML = data.map(item => `
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500" class="card-img-top" style="height:180px; object-fit:cover;">
+                    <div class="card-body">
+                        <span class="badge bg-success mb-2">Available</span>
+                        <h5 class="card-title fw-bold">${item.title}</h5>
+                        <h6 class="text-primary fw-bold">Rs. ${item.price || 0}</h6>
+                        <p class="small">${item.description}</p>
+                        <p class="small"><b>User:</b> ${item.studentName}</p>
+                        <p class="small"><b>Contact:</b> ${item.contactInfo || 'N/A'}</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center pb-3">
+                        <button class="btn btn-sm btn-outline-info" onclick="loadReviews('${item.id}')">Reviews</button>
+                        <div>
+                            <button class="btn btn-link text-primary p-0 me-2" onclick="openEditModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${item.description.replace(/'/g, "\\'")}', '${item.contactInfo}', '${item.studentName}', ${item.price || 0})"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-link text-danger p-0" onclick="deleteListing('${item.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>`).join('');
+    }
+
+    async function fetchListings() {
+        const res = await fetch(API_URL, { headers: {'SECRET_API_KEY':'MySuperSecretKey123'} });
+        renderListings(await res.json());
+    }
+
+    async function saveListing(e) {
+        e.preventDefault();
+        const id = document.getElementById('itemId').value;
+        const payload = { 
+            title: document.getElementById('itemTitle').value,
+            description: document.getElementById('itemDesc').value,
+            contactInfo: document.getElementById('itemContact').value,
+            studentName: document.getElementById('studentName').value,
+            price: parseFloat(document.getElementById('itemPrice').value)
+        };
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API_URL}/${id}` : API_URL;
+        await fetch(url, { method, headers: {'SECRET_API_KEY': 'MySuperSecretKey123', 'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        bootstrapModal.hide();
+        fetchListings();
+    }
+
+    async function loadReviews(listingId) {
+        document.getElementById('currentListingId').value = listingId;
+        const res = await fetch(`${REVIEW_API}/${listingId}`, { headers: {'SECRET_API_KEY':'MySuperSecretKey123'} });
+        const reviews = await res.json();
+        const body = document.getElementById('reviews-body');
+        body.innerHTML = reviews.length > 0 ? reviews.map(r => `
+            <div class="p-2 border-bottom">
+                <strong>${r.studentName}</strong> 
+                <span class="text-warning">${'⭐'.repeat(r.rating || 0)}</span><br>
+                <small>${r.comment}</small>
+            </div>`).join('') : '<p>No reviews yet.</p>';
+        reviewModal.show();
+    }
+
+    async function submitReview() {
+        const payload = {
+            listingId: document.getElementById('currentListingId').value,
+            studentName: document.getElementById('reviewerName').value,
+            comment: document.getElementById('reviewerComment').value,
+            rating: parseInt(document.getElementById('reviewerRating').value)
+        };
+        await fetch(REVIEW_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'SECRET_API_KEY': 'MySuperSecretKey123' },
+            body: JSON.stringify(payload)
+        });
+        document.getElementById('reviewerName').value = '';
+        document.getElementById('reviewerComment').value = '';
+        loadReviews(payload.listingId);
+    }
+
+    async function deleteListing(id) {
+        if(confirm('Are you sure?')) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: {'SECRET_API_KEY':'MySuperSecretKey123'} });
+            fetchListings();
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
