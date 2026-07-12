@@ -68,9 +68,11 @@ public class ListingController {
         @PathVariable String id,
         @RequestBody Listing listingDetails) {
 
+//
         if (!isAuthorized(apiKey)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or Missing API Key!");
         }
+        
 
         Listing updatedListing = listingService.updateListing(id, listingDetails);
         if (updatedListing == null) {
