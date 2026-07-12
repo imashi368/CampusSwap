@@ -16,8 +16,5 @@ public class PageController {
         return "register";
     }
 
-    @GetMapping("/")
-    public String indexPage() {
-        return "index";
-    }
+    
 }
