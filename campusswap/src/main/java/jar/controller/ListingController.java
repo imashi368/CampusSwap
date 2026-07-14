@@ -28,7 +28,7 @@ public class ListingController {
 
     @Autowired
     private ListingService listingService;
-    @Value("${SECRET_API_KEY:MySuperSecretKey123}") 
+    @Value("${SECRET_API_KEY}")
     private String secretApiKey;
 
     
