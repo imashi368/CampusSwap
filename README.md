@@ -19,6 +19,10 @@ CampusSwap is a platform designed for university students to exchange, buy, or s
 - [Key Challenges & Solutions](#key-challenges--solutions)
 - [Future Improvements](#future-improvements)
 - [License](#license)
+- [Live Demo](#livedemo)
+- [Technical Status](technicalstatus)
+- [Docker Deployment](dockerdeployment)
+- 
 
 ---
 
@@ -99,3 +103,18 @@ Uses **GitHub Actions** for automated build and test cycles on every push.
 
 ## License
 Distributed under the MIT License.
+
+---
+
+## Live Demo
+[CampusSwap App]https://my-campusswap-app.onrender.com/
+
+---
+
+## Technical Status
+Due to an ongoing technical configuration issue with the cloud database connection, this live demo is currently partially functional. The complete, fully functional version of the application is available and verified in the local development environment.
+
+---
+
+## Docker Deployment
+This project is containerized for consistent deployment. You can access the Docker Hub repository here:https://hub.docker.com/repository/docker/i0703721005/campusswap-api/general
