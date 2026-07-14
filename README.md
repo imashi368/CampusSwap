@@ -22,7 +22,7 @@ CampusSwap is a platform designed for university students to exchange, buy, or s
 - [Live Demo](#livedemo)
 - [Technical Status](technicalstatus)
 - [Docker Deployment](dockerdeployment)
-- 
+- [Troubleshooting / Known Issues](troubleshooting / known Issues]
 
 ---
 
@@ -107,7 +107,7 @@ Distributed under the MIT License.
 ---
 
 ## Live Demo
-[CampusSwap App]https://my-campusswap-app.onrender.com/
+[CampusSwap App](https://my-campusswap-app.onrender.com/)
 
 ---
 
@@ -117,4 +117,9 @@ Due to an ongoing technical configuration issue with the cloud database connecti
 ---
 
 ## Docker Deployment
-This project is containerized for consistent deployment. You can access the Docker Hub repository here:
+This project is containerized for consistent deployment. You can access the Docker Hub repository here:(https://hub.docker.com/repositories/i0703721005)
+
+---
+## Troubleshooting / Known Issues
+**Database Connection:**
+The application is successfully containerized and runs as expected. The `Connection refused` error observed in the logs is due to network restrictions on the local environment preventing access to the cloud-hosted MongoDB Atlas instance. This does not indicate any issues with the application code or the Dockerization process.
