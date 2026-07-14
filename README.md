@@ -22,7 +22,7 @@ CampusSwap is a platform designed for university students to exchange, buy, or s
 - [Live Demo](#livedemo)
 - [Technical Status](technicalstatus)
 - [Docker Deployment](dockerdeployment)
-- [Troubleshooting / Known Issues](troubleshooting/known Issues)
+- [Troubleshooting / Known Issues]
 
 ---
 
