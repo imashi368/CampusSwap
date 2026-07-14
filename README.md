@@ -117,4 +117,4 @@ Due to an ongoing technical configuration issue with the cloud database connecti
 ---
 
 ## Docker Deployment
-This project is containerized for consistent deployment. You can access the Docker Hub repository here:https://hub.docker.com/repository/docker/i0703721005/campusswap-api/general
+This project is containerized for consistent deployment. You can access the Docker Hub repository here:
